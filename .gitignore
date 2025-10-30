@@ -1,0 +1,7 @@
+# .gitignore
+/mariadb_data/*
+/artifex-site/node_modules/*
+db_password.txt
+db_user.txt
+api_key.txt
+root_password.txt
