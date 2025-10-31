@@ -16,7 +16,7 @@ COPY artifex-site/ .
 RUN find node_modules -name esbuild -type f -exec chmod +x {} \; || true
 RUN chmod +x node_modules/.bin/vite || true
 
-EXPOSE 3000
+EXPOSE 3000 3001
 
 # Usa npm run dev (carrega vite.config.ts)
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
+CMD node server/index.js & npm run dev -- --host 0.0.0.0 --port 3000

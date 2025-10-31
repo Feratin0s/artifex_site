@@ -13,4 +13,5 @@ export MYSQL_PASSWORD="$DB_PASSWORD"
 export MYSQL_ROOT_PASSWORD="$ROOT_PASSWORD"
 
 # Executa o entrypoint original do MariaDB
-exec docker-entrypoint.sh mysqld
+# Usa mariadbd em vez de mysqld para compatibilidade com versões mais recentes
+exec docker-entrypoint.sh mariadbd

@@ -15,21 +15,40 @@ export function Contact() {
     newsletter: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Mock form submission
-    const message = formData.newsletter
-      ? "Mensagem enviada com sucesso! Você será inscrito em nossa newsletter."
-      : "Mensagem enviada com sucesso! Entraremos em contato em breve.";
-    toast.success(message);
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-      newsletter: false,
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
     });
-  };
+
+    const data = await response.json();
+
+    if (data.success) {
+      const message = formData.newsletter
+        ? "Mensagem enviada com sucesso! Você será inscrito em nossa newsletter."
+        : "Mensagem enviada com sucesso! Entraremos em contato em breve.";
+      toast.success(message);
+      
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        newsletter: false,
+      });
+    } else {
+      toast.error("Erro ao enviar mensagem. Tente novamente.");
+    }
+  } catch (error) {
+    toast.error("Erro de conexão. Verifique sua internet.");
+  }
+};
 
   const handleChange = (
     e: React.ChangeEvent<

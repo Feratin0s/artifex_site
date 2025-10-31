@@ -10,11 +10,16 @@ services:
     environment:
       - DB_HOST=db_artifex
       - DB_NAME=sitedb
+      - DB_USER_FILE=/run/secrets/db_user
+      - DB_PASSWORD_FILE=/run/secrets/db_password
     secrets:
       - db_user
       - db_password
     ports:
-      - "3000:3000"
+      - "3000:3000"   # Frontend
+      - "3001:3001"   # Backend
+    volumes:
+      - ./artifex-site:/app/artifex-site
     networks:
       - internal
 
@@ -22,9 +27,17 @@ services:
     image: mariadb:latest
     container_name: artifex-db
     restart: always
+    pull_policy: always
     volumes:
-      - ./mariadb_data:/var/lib/mysql
-      - ./entrypoint.sh:/entrypoint-custom.sh  
+      - artifex_db_data:/var/lib/mysql
+      - ./entrypoint.sh:/entrypoint-custom.sh
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    environment:
+      - MARIADB_INITDB_SKIP_TZINFO=true
+      - MARIADB_ROOT_PASSWORD_FILE=/run/secrets/root_password
+      - MARIADB_DATABASE=sitedb
+      - MARIADB_USER_FILE=/run/secrets/db_user
+      - MARIADB_PASSWORD_FILE=/run/secrets/db_password
     command: --default-authentication-plugin=mysql_native_password
     entrypoint: ["/bin/bash", "/entrypoint-custom.sh"]
     secrets:
@@ -39,6 +52,10 @@ services:
 networks:
   internal:
     driver: bridge
+
+volumes:
+  artifex_db_data:
+    name: artifex_db_data
 
 secrets:
   db_password:
